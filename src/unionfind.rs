@@ -103,7 +103,7 @@ impl<T: std::fmt::Display + std::cmp::Eq> Display for Node<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{{{} -> {}}}",
+            "{{\"{}\" -> \"{}\"}}",
             self.this,
             self.parent
                 .upgrade()
