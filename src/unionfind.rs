@@ -1,5 +1,5 @@
 use std::cell::RefCell;
-use std::fmt::Debug;
+use std::fmt::Display;
 use std::rc::{Rc, Weak};
 
 pub struct Node<T: std::fmt::Display + std::cmp::Eq> {
@@ -85,17 +85,31 @@ where
     }
 }
 
-impl<T: std::fmt::Display + std::cmp::Eq> Debug for Node<T> {
+pub fn to_dot_string<T>(set: Vec<Rc<RefCell<Node<T>>>>) -> String
+where
+    T: std::fmt::Display + std::cmp::Eq,
+{
+    let mut parts = Vec::new();
+    parts.push(String::from("{{"));
+    for node in set.clone() {
+        parts.push(format!("{}", node.borrow()));
+    }
+    parts.push(String::from("}}"));
+    parts.concat()
+}
+
+impl<T: std::fmt::Display + std::cmp::Eq> Display for Node<T> {
+    /// By default, display `Node`(s) in Graphviz DOT format.
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{} <- {}",
+            "{{{} -> {}}}",
+            self.this,
             self.parent
                 .upgrade()
                 .expect("Parents should always be valid.")
                 .borrow()
                 .this,
-            self.this
         )
     }
 }
